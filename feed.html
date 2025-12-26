@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .feedback-form input, .feedback-form select, .feedback-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .feedback-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .feedback-section {
+            margin-top: 40px;
+        }
+        .feedback {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="feedback-title">Feedback</h1>
+
+    <div class="feedback-form">
+        <label for="place">Choose a place:</label>
+        <select id="place" onchange="updateRoles()">
+            <option value="general">General Feedback</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="college">College</option>
+            <option value="hotel">Hotel</option>
+        </select>
+
+        <label for="role">Choose a role:</label>
+        <select id="role"></select>
+
+        <label for="username">Enter your name:</label>
+        <input type="text" id="username" placeholder="Your Name" required>
+
+        <label for="comment">Type your opinion:</label>
+        <textarea id="comment" rows="4" placeholder="Write your feedback..." required></textarea>
+
+        <button class="feedback-button" onclick="submitFeedback()">Submit Feedback</button>
+    </div>
+
+    <div class="feedback-section">
+        <h2>Given Feedback</h2>
+        <div id="feedback-display"></div>
+    </div>
+</div>
+<script>
+    // Define roles based on the selected place
+    const feedbackRoles = {
+        "general": ["General Feedback"],
+        "restaurant": ["Chef", "Waiter", "Service Staff", "Manager"],
+        "college": ["Principal", "Dean", "HOD", "Professor"],
+        "hotel": ["Receptionist", "Room Service", "Manager", "Housekeeping"]
+    };
+
+    function updateRoles() {
+        const placeType = document.getElementById("place").value;
+        const roleSelect = document.getElementById("role");
+
+        roleSelect.innerHTML = "";
+
+        feedbackRoles[placeType].forEach(role => {
+            const option = document.createElement("option");
+            option.value = role.toLowerCase();
+            option.textContent = role;
+            roleSelect.appendChild(option);
+        });
+    }
+
+    async function loadFeedback() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/feedback/");
+        console.log("Response status:", response.status); // Check the status of the fetch
+        if (!response.ok) {
+            throw new Error("Failed to fetch feedback");
+        }
+
+        const feedbacks = await response.json();
+        console.log("Fetched feedbacks:", feedbacks); // Log feedback data
+
+        const displayDiv = document.getElementById("feedback-display");
+        displayDiv.innerHTML = ""; // Clear previous content
+
+        if (feedbacks.length === 0) {
+            displayDiv.innerHTML = "<p>No feedback submitted yet.</p>";
+            return;
+        }
+
+        feedbacks.forEach(fb => {
+            const div = document.createElement("div");
+            div.className = "feedback";
+            div.innerHTML = `
+                <strong>${fb.name}</strong> (${fb.role}) from <em>${fb.place}</em><br>
+                "${fb.message}"
+            `;
+            displayDiv.appendChild(div);
+        });
+    } catch (error) {
+        console.error("Error loading feedback:", error);
+    }
+}
+
+
+
+
+    // Submit new feedback
+    async function submitFeedback() {
+        const username = document.getElementById('username').value.trim();
+        const role = document.getElementById('role').value;
+        const comment = document.getElementById('comment').value.trim();
+        const place = document.getElementById('place').value;
+
+        if (!username || !comment) {
+            alert("Please enter your name and feedback.");
+            return;
+        }
+
+        const feedbackData = {
+            name: username,
+            role: role,
+            place: place,
+            message: comment
+        };
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/feedback/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(feedbackData)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || `HTTP error! Status: ${response.status}`);
+            }
+
+            alert(result.message);
+            document.getElementById('username').value = '';
+            document.getElementById('comment').value = '';
+            loadFeedback();  // Refresh feedback display
+        } catch (error) {
+            console.error("Error submitting feedback:", error);
+            alert(`Error submitting feedback: ${error.message}`);
+        }
+    }
+
+    // Run on page load
+    window.onload = function () {
+        updateRoles();
+        loadFeedback();
+    };
+</script>
+
+
+</body>
+</html>

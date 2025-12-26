@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+
+    .container {
+    max-width: 800px; /* Increased width */
+    margin: 0 auto;
+    background: white;
+    padding: 25px; /* Increased padding */
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-container {
+    max-height: 700px; /* Increased max-height */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 15px; /* Increased padding */
+    border-radius: 10px;
+    background: #fff;
+}
+
+        h1 {
+            color: #007bff;
+        }
+
+
+        .place-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            text-align: justify;
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .back-btn:hover {
+            background: #0056b3;
+        }
+
+        .Famous {
+    list-style-type: disc; /* Keeps bullets */
+    padding-left: 15px; /* Adjusts bullet positioning */
+    margin: 5px 0; /* Reduces extra space */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+        .Famous li {
+    margin: 0; /* Removes extra gap between items */
+    padding: 2px 0; /* Adjusts spacing */
+    line-height: 1.2; /* Reduces line height */
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 id="place-name">Loading...</h1>
+        <div class="scroll-container" id="place-details">
+            <!-- Images and descriptions will be inserted dynamically -->
+        </div>
+        <br>
+        <a href="index.html" class="back-btn">Go Back</a>
+        <a href="feed.html" class="back-btn">Feedback</a>
+        
+    </div>
+
+    <script>
+        // Define place details
+        var placeData = {
+        "Gandikota Forts": {
+            images: ["/static/images/gandikota1.jpg", "/static/images/gandikota2.jpg"],
+            description: "Gandikota Fort, also known as the 'Grand Canyon of India', is famous for its stunning landscapes and ancient architecture.",
+            Famous: ["AP Tourism Harotha Resort","Moon Resort"]
+        },
+        "Ameen Peer Dargah": {
+            images: ["images/ameenpeer12.jpg", "images/ameenpeer2.jpg"],
+            description: "Ameen Peer Dargah is a spiritual site known for its history and importance to different communities.",
+            Famous: ["PVR Grand INN","Meenakshi Hotel"]
+        },
+        "Ramoji Film City": {
+            images: ["images/ramoji1.jpg", "images/ramoji2.jpg"],
+            description: "Ramoji Film City, recognized as the world's largest film city by Guinness World Records, is a popular thematic tourism destination and major film production hub, spanning over 2000 acres and featuring a mix of natural landscapes, artificial sets, and an amusement park. ",
+            Famous: ["Sitara Luxuar Hotel","Bhagavatham Cafe for snacks"]
+        },
+        "Tirumala Temple": {
+            images: ["images/tirumala1.jpg", "images/Tirupati.jpg"],
+            description: "Tirumala Temple, one of the wealthiest temples in the world, is a sacred pilgrimage site in India.",
+            Famous: ["Hotel pai viceory","Renest Tirupathi"]
+        },
+        "Talakona Waterfall": {
+            images: ["images/talakona1.jpg", "images/talakona2.jpg"],
+            description: "Tirumala Temple, one of the wealthiest temples in the world, is a sacred pilgrimage site in India.",
+            Famous: ["Bhojanam","Forest Guest House Restaurant"]
+        },
+        "Bharadwaja Tirtham": {
+            images: ["images/bhatir2.jpg", "images/bhatir1.jpg"],
+            description: "Tirumala Temple, one of the wealthiest temples in the world, is a sacred pilgrimage site in India.",
+            Famous: ["Padmavathi Brahmana Hotel","SSR HOTEL SRIKALAHASTI"]
+        },
+        
+        "Prakasam Barrage": {
+            images: ["images/prakashambarr1.jpg", "images/prakashambarr2.jpg"],
+            description: "Tirumala Temple, one of the wealthiest temples in the world, is a sacred pilgrimage site in India.",
+            Famous: ["The Oriental Pavilion","Bhavani Island Resort"]
+        },
+        "Charminar": {
+            images: ["images/charminar1.jpg", "images/charminar2.jpg"],
+            description: "Charminar is an iconic monument in Hyderabad, built in 1591, showcasing Indo-Islamic architecture.",
+            Famous: ["Hotel shadab","Hotel Nayaab"]
+        },
+        "Hussain Sagar Lake": {
+            images: ["images/hussainsagar1.jpg", "images/hussainsagar2.jpg"],
+            description: "Hussain Sagar is a heart-shaped lake in Hyderabad, famous for its large Buddha statue in the middle.",
+            Famous: ["The Park Hyderabad"," Katriya Hotel"]
+        },
+        "Sri Kalahasti Temple": {
+            images: ["images/srikalahasthi1.jpg", "images/srikalahasthi2.jpg"],
+            description: " Srikalahasteeswara Temple, is a renowned Hindu temple located in Srikalahasti, Andhra Pradesh, famous for its Vayu linga, representing the element of air, and its unique architecture",
+            Famous: ["Hotel MGM Grand","SSR Hotel"]
+        },
+        "Kondapalli Forts": {
+            images: ["images/kondapalli1.jpg", "images/kondapalli2.jpg"],
+            description: "Kondapalli is well known for its wooden toys named after it. The ancient fort of Kondapalli is a place of historical importance and tourist interest.",
+            Famous: ["Swargam Family Restaurant","Vuma Resorts"]
+        },
+        "Thousand Pillar Temple": {
+            images: ["images/thousand1.jpg", "images/thousand2.jpg"],
+            description: "The temple is dedicated to three deities: Lord Shiva, Lord Vishnu, and Lord Surya (the Sun god) and is known for its intricate carvings, star-shaped structure, and numerous pillars.",
+            Famous: ["Hotel Shreya","Hotel Grand Kakatiya"]
+        },
+        "Warangal Fort": {
+            images: ["images/warangalfort1.jpg", "images/warangalfort2.jpg"],
+            description: "The fort features imposing walls, gateways, and palaces, showcasing medieval Indian architecture.",
+            Famous: ["Kalinga Dhaba","Kakatiya Resort"]
+        },
+        "Kuntala waterfalls": {
+            images: ["images/kuntala1.jpg", "images/kuntala2.jpg"],
+            description: "Kuntala Waterfalls, located in the Adilabad district of Telangana, India, is a stunning natural attraction known for its height and scenic beauty",
+            Famous: ["Hotel MGM Grand","SSR Hotel"]
+        },
+        "Rama Krishna Beach": {
+            images: ["images/ramakrishna1.jpg", "images/ramakrishna1.jpg"],
+            description: "Rama Krishna Beach, also known as RK Beach, is a popular beach in Visakhapatnam, Andhra Pradesh, located about 120 km from Araku Valley.",
+            Famous: ["Tempteys"]
+        },
+        "Araku vally": {
+            images: ["images/araku1.jpg", "images/araku2.jpg"],
+            description: "Araku Valley, a hill station in the Eastern Ghats of Andhra Pradesh, is a picturesque destination known for its lush landscapes, diverse tribal culture, and pleasant climate",
+            Famous: ["Nature's Nest Araku","Mountain View Resorts"]
+        }
+
+    };
+
+    // Function to get the query parameter
+    function getQueryParam(param) {
+        var urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    var placeName = getQueryParam("name");
+
+    if (placeName && placeData[placeName]) {
+        document.getElementById("place-name").textContent = placeName;
+        var placeDetails = document.getElementById("place-details");
+
+        placeData[placeName].images.forEach(imgSrc => {
+            var imgElement = document.createElement("img");
+            imgElement.src = imgSrc;
+            imgElement.className = "place-img";
+            placeDetails.appendChild(imgElement);
+        });
+
+        var descElement = document.createElement("p");
+        descElement.className = "description";
+        descElement.textContent = placeData[placeName].description;
+        placeDetails.appendChild(descElement);
+
+        var famElements = document.createElement("ul");
+        famElements.className = "Famous";
+
+        placeData[placeName].Famous.forEach(famItem => {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.href = "names.html?name=" + encodeURIComponent(famItem);
+            a.textContent = famItem;
+            a.style.textDecoration = "none";
+            a.style.color = "#007bff";
+            li.appendChild(a);
+            famElements.appendChild(li);
+        });
+
+        placeDetails.appendChild(famElements);
+
+    } else {
+        document.getElementById("place-name").textContent = "Place Not Found";
+        document.getElementById("place-details").innerHTML = "<p>No details available.</p>";
+    }
+    function givefeedback(){
+        alert("Feedback is given");
+    }
+
+
+
+    function getQueryParam(param) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(param);
+    }
+
+    const name = getQueryParam("name");
+
+    if (name) {
+        document.querySelector("h1").textContent = name;
+        document.getElementById("place-name").textContent = name;
+
+        // You can extend this with more info like images, reviews etc.
+    } else {
+        document.querySelector("h1").textContent = "No Restaurant Found";
+        document.getElementById("place-name").textContent = "Unknown";
+    }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Details</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    padding: 20px;
+                    background-color: #f4f4f4;
+                }
+                .container {
+                    max-width: 700px;
+                    margin: 20px auto;
+                    background: white;
+                    padding: 25px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+                }
+                h1 {
+                    color: #007bff;
+                }
+                .desc, .timing {
+                    font-size: 18px;
+                    margin: 15px 0;
+                    color: #555;
+                    text-align: justify;
+                }
+                .menu-list {
+                    list-style-type: none;
+                    padding: 0;
+                    margin-top: 10px;
+                }
+                .menu-list li {
+                    background: #f0f0f0;
+                    margin: 5px 0;
+                    padding: 8px;
+                    border-radius: 5px;
+                }
+                .menu-list a {
+                    color: #007bff;
+                    text-decoration: none;
+                }
+                .menu-list a:hover {
+                    text-decoration: underline;
+                    color: #0056b3;
+                }
+                .back-btn {
+                    display: inline-block;
+                    margin-top: 20px;
+                    padding: 10px 15px;
+                    background: #007bff;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                }
+                .back-btn:hover {
+                    background: #0056b3;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1 id="restaurant-name">Loading...</h1>
+                <div id="restaurant-content"></div>
+                <a href="javascript:history.back()" class="back-btn">Back to Place</a>
+            </div>
+        
+            <script>
+                const restaurantData = {
+                    "AP Tourism Harotha Resort": {
+        description: "Haritha Resort by AP Tourism offers scenic views near Gandikota with essential amenities and a peaceful stay.",
+        menu: ["South Indian Meals", "Snacks", "Tea", "Breakfast"],
+        timing: "6:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://tourism.ap.gov.in/home" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/AP+Tourism+Haritha+Resort/data=!4m2!3m1!1s0x0:0x7a4289f2898d84c1?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "Moon Resort": {
+        description: "Moon Resort provides cozy accommodations near Gandikota with basic dining and local experiences.",
+        timing: "7:00 AM - 9:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.justdial.com/Jammalamadugu/Moon-Resort-Gandikota/9999P8560-8560-230315035912-B8U3_BZDET" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/MOON+RESORT/@14.8106232,78.2901331,17z/data=!3m1!4b1!4m9!3m8!1s0x3bb40b74dbcabd4b:0x5e200d389d178a60!5m2!4m1!1i2!8m2!3d14.8106232!4d78.2901331!16s%2Fg%2F11t71n32rp?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }        
+        ]
+    },
+    "PVR Grand INN": {
+        description: "PVR Grand INN offers comfortable stays in Kadapa with modern rooms and an in-house restaurant.",
+        timing: "6:30 AM - 10:30 PM",
+        links: [
+        { label: "Visit Website", url: "https://pvrgrandinn.com/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/PVR+GRAND+INN/data=!4m2!3m1!1s0x0:0xfb7347b33097deae?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "Meenakshi Hotel": {
+        description: "Meenakshi Hotel is a well-known hotel in Kadapa offering both vegetarian and non-vegetarian meals.",
+        menu: ["Biryani", "Meals", "Idly", "Dosa"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+Meenakshi+Bhavan/@14.4786163,78.8235131,17z/data=!3m1!4b1!4m6!3m5!1s0x3bb3721c784a0b4d:0x29a569e610a55833!8m2!3d14.4786163!4d78.8235131!16s%2Fg%2F124yqvnm6?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Sitara Luxuar Hotel": {
+        description: "Sitara Luxury Hotel, located inside Ramoji Film City, provides a regal stay with premium dining options.",
+        menu: ["Multi-cuisine", "Buffet", "Desserts", "Mocktails"],
+        timing: "6:00 AM - 11:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.hotels.ramojifilmcity.com/hotel-sitara/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Sitara+Luxury+Hotel+Ramoji+Film+City/@17.2601709,78.6787226,17z/data=!3m1!4b1!4m9!3m8!1s0x3bcb0a188536a135:0x37e8f625a6a83c8b!5m2!4m1!1i2!8m2!3d17.2601709!4d78.6787226!16s%2Fg%2F11btv696bf?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Bhagavatham Cafe for snacks": {
+        description: "Bhagavatham Cafe is a popular snack and coffee spot near Ramoji Film City, offering quick bites.",
+        menu: ["Snacks", "Tea", "Coffee", "Pastries"],
+        timing: "9:00 AM - 9:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://momocafe.marriott.com" },
+        { label: "Google Maps", url: "https://goo.gl/maps/momo" }
+        ]
+    },
+    "Hotel Pai Viceroy": {
+        description: "Hotel Pai Viceroy offers premium stays in Tirupati with modern amenities and close proximity to Tirumala Temple.",
+        menu: ["Idly", "Dosa", "Meals", "Biryanis"],
+        timing: "6:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.paihotels.com/viceroy-tirupati/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+Pai+Viceroy,+Tirupathi/data=!4m2!3m1!1s0x0:0x6f1e8ad4354c55bf?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "Renest Tirupathi": {
+        description: "Renest Tirupati is a stylish hotel featuring cozy rooms and a restaurant serving local Andhra cuisine.",
+        menu: ["South Indian", "Continental", "Buffet"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.renesthotels.com/renest-tirupati/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Renest+Tirupati/data=!4m2!3m1!1s0x0:0x2fc32cb9b2f5f708?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "Bhojanam": {
+        description: "Bhojanam is a pure vegetarian restaurant near Tirupati, offering traditional meals served on banana leaves.",
+        menu: ["Andhra Meals", "Tiffins", "Sweets"],
+        timing: "7:00 AM - 9:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.co.in/maps/search/bhojanam+reatauremt+near+talakona/@17.5702861,78.4115919,11.71z?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Forest Guest House Restaurant": {
+        description: "Restaurant attached to the Forest Guest House near Talakona Waterfalls, offering simple local dishes.",
+        timing: "8:00 AM - 8:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Forest+Rest+House/data=!4m2!3m1!1s0x0:0x6c3a85c3512b321c?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "Padmavathi Brahmana Hotel": {
+        description: "A traditional Brahmin vegetarian hotel near Tirumala, known for its sattvic meals and homely flavors.",
+        menu: ["Upma", "Pongal", "Full Meals"],
+        timing: "6:30 AM - 9:30 PM",
+        links: [
+        { label: "Visit Website", url: "https://wanderboat.ai/restaurants/india/andhra-pradesh/padmavathi-brahmana-hotel/NsFfCv4KS4Cf7gzWlsub_Q" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Padmavathi+Brahmana+Hotel/@13.7499531,79.7041412,17z/data=!3m1!4b1!4m6!3m5!1s0x3a4d3f4a84ab3feb:0x3b2174f0e279e91f!8m2!3d13.7499531!4d79.7041412!16s%2Fg%2F11hk4_68q2?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "SSR HOTEL SRIKALAHASTI": {
+        description: "SSR Hotel in Srikalahasti provides lodging and food options close to the famous temple.",
+        menu: ["South Indian", "North Indian", "Chinese"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.ssrhotel.com/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/SSR+HOTEL+SRIKALAHASTI/@13.7463799,79.6974624,17z/data=!3m1!4b1!4m9!3m8!1s0x3a4d3e5468a4ec93:0x72f75bbf598f8380!5m2!4m1!1i2!8m2!3d13.7463799!4d79.6974624!16s%2Fg%2F11b73p6cz9?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "The Oriental Pavilion": {
+        description: "Located in Vijayawada, this upscale restaurant serves a range of oriental and continental delicacies.",
+        menu: ["Chinese", "Thai", "Asian Fusion"],
+        timing: "12:00 PM - 11:00 PM",
+        links: [
+        { label: "Zomato profile", url: "https://www.zomato.com/vijayawada/oriental-pavillion-fortune-murali-park-labbipet" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Fortune+Murali+Park,+Vijayawada+-+Member+ITC+hotels'+group/@16.5012476,80.6459265,17z/data=!3m1!4b1!4m9!3m8!1s0x3a35faba8523fbfd:0xe19a11d0e552d0e1!5m2!4m1!1i2!8m2!3d16.5012476!4d80.6459265!16s%2Fg%2F1v44nvd7?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Bhavani Island Resort": {
+        description: "A riverfront resort on Bhavani Island offering scenic views, boating, and resort-style dining.",
+        menu: ["Buffet", "South Indian", "Seafood"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.com/travel/search?q=bhavani%20island%20resorts%20vijayawada&g2lb=4965990%2C4969803%2C72277293%2C72302247%2C72317059%2C72406588%2C72414906%2C72471280%2C72472051%2C72481459%2C72485658%2C72560029%2C72573224%2C72616120%2C72619927%2C72647020%2C72648289%2C72686036%2C72760082%2C72803964%2C72827241%2C72832976%2C72852292%2C72882230%2C72885032%2C72922331%2C72937416&hl=en-IN&gl=in&ssta=1&ts=CAESCAoCCAMKAggDGhwSGhIUCgcI6Q8QBBgaEgcI6Q8QBBgbGAEyAhAAKgcKBToDSU5S&qs=CAEyFENnc0k0Sno2OXEzZ3BhdU9BUkFCOApCCRHSMZP_jmXa0kIJEZ8kuoFN1rFyQgkRzX7zOYp36wtabAgBMmiqAWUQASoaIhZiaGF2YW5pIGlzbGFuZCByZXNvcnRzKAAyHhABIho2NACucIeaxRbs1NDpZWCLUJFxs0BOLJqs_DIlEAIiIWJoYXZhbmkgaXNsYW5kIHJlc29ydHMgdmlqYXlhd2FkYQ&ap=aAG6AQhvdmVydmlldw&ictx=111&ved=0CAAQ5JsGahcKEwi4rpLGp-aMAxUAAAAAHQAAAAAQBg" }
+        ]
+    },
+    "Hotel Shadab": {
+        description: "Hotel Shadab is a popular spot in Hyderabad known for its delicious biryani and traditional Hyderabadi cuisine.",
+        menu: ["Biryani", "Haleem", "Kebabs", "Falooda"],
+        timing: "11:00 AM - 11:00 PM",
+        links: [
+            { label: "Zomato Profile", url: "https://www.zomato.com/hyderabad/hotel-shadab-ghansi-bazaar" },
+            { label: "Google maps", url: "https://www.google.com/maps/place/Hotel+Shadab/@17.368888,78.4755104,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb978822462c2b:0x6d4d9d21010f8f3d!8m2!3d17.368888!4d78.4755104!16s%2Fg%2F1v_vrcb6?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Hotel Nayaab": {
+        description: "Hotel Nayaab is a local Hyderabadi favorite for traditional dishes and aromatic biryani.",
+        menu: ["Hyderabadi Biryani", "Mutton Korma", "Chai"],
+        timing: "6:00 AM - 11:00 PM",
+        links: [
+        { label: "Zomato profile", url: "https://www.zomato.com/hyderabad/hotel-nayaab-since-1986-charminar" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+Nayaab/data=!4m2!3m1!1s0x0:0xd8dabd74a8865e42?sa=X&ved=1t:2428&ictx=111" }
+        ]
+    },
+    "The Park Hyderabad": {
+        description: "The Park Hyderabad is a luxury hotel offering lakeside dining and premium hospitality near Hussain Sagar.",
+        menu: ["Global Cuisine", "Buffet", "Drinks"],
+        timing: "24 Hours",
+        links: [
+        { label: "Visit Website", url: "https://www.theparkhotels.com/hyderabad/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/THE+PARK+HYDERABAD/@17.4235174,78.462544,17z/data=!3m1!4b1!4m9!3m8!1s0x3bcb9714a4effb4b:0xa66b360a75ab41e3!5m2!4m1!1i2!8m2!3d17.4235174!4d78.462544!16s%2Fg%2F11fl_x015l?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Katriya Hotel": {
+        description: "Katriya Hotel & Towers offers a fine-dining experience along with accommodation in central Hyderabad.",
+        menu: ["Multi-cuisine", "Veg & Non-Veg Buffets"],
+        timing: "7:00 AM - 11:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.katriyahotel.com/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Katriya+Hotel+%26+Towers/@17.4247838,78.4594924,17z/data=!3m1!4b1!4m9!3m8!1s0x3bcb90b49cfd03c3:0xc0b9304700ac8b74!5m2!4m1!1i2!8m2!3d17.4247838!4d78.4594924!16s%2Fg%2F1pty613wb?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Hotel MGM Grand": {
+        description: "Hotel MGM Grand is a mid-range hotel with decent dining facilities available in towns like Warangal and Kurnool.",
+        menu: ["South Indian", "Indian-Chinese", "Snacks"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.booking.com/searchresults.en-gb.html?aid=311984&label=mgm-grand-2g6S%2AEIa6qcu73B6LuqaMQS226806801599%3Apl%3Ata%3Ap1%3Ap2%3Aac%3Aap%3Aneg%3Afi%3Atikwd-32368459861%3Alp9147001%3Ali%3Adec%3Adm%3Appccp%3DUmFuZG9tSVYkc2RlIyh9YXORK0YJiVoOxcWODxYDaAA&gclid=Cj0KCQjwtpLABhC7ARIsALBOCVqw_uHa0sdvZYMIbEoUtCpFUfXdc4jHN2K5Xz4fYTN-UJ-GJ-uWXxMaAtWhEALw_wcB&highlighted_hotels=343427&redirected=1&city=900049634&hlrd=no_dates&source=hotel&expand_sb=1&keep_landing=1&sid=9c9d35f4eaea1d0f86787542dc428449" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+MGM+Grand/@13.7486367,79.6967405,17z/data=!3m1!4b1!4m9!3m8!1s0x3a4d3e51a9110c09:0x1b17aa7fd4fcf26e!5m2!4m1!1i2!8m2!3d13.7486367!4d79.6967405!16s%2Fg%2F1tmbtjys?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "SSR Hotel": {
+        description: "SSR Hotel offers simple accommodations with a clean and hygienic restaurant.",
+        menu: ["Tiffins", "Meals", "North Indian"],
+        timing: "6:30 AM - 9:30 PM",
+        links: [
+            { label: "Visit Website", url: "https://www.ssrhotel.com/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/SSR+HOTEL+SRIKALAHASTI/@13.7463799,79.6974624,17z/data=!3m1!4b1!4m9!3m8!1s0x3a4d3e5468a4ec93:0x72f75bbf598f8380!5m2!4m1!1i2!8m2!3d13.7463799!4d79.6974624!16s%2Fg%2F11b73p6cz9?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }]
+    },
+    "Swargam Family Restaurant": {
+        description: "Swargam is a cozy family restaurant known for Andhra-style meals and vegetarian-friendly options.",
+        menu: ["Veg Meals", "Roti Curries", "Tandoori"],
+        timing: "11:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.justdial.com/Krishna/Swargam-Family-Restaurant-Near-Sai-Baba-Temple-Kondapalli/9999P8676-8676-211001124249-D4B3_BZDET" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/SWARGAM+FAMILY+RESTAURANT/@16.6191878,80.5401193,17z/data=!3m1!4b1!4m6!3m5!1s0x3a35ebfe15b42ab5:0x493e990802be217f!8m2!3d16.6191878!4d80.5401193!16s%2Fg%2F11fqt0_r6x?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Vuma Resorts": {
+        description: "Vuma Resorts is a peaceful eco-resort near Araku with a small in-house dining facility.",
+        menu: ["Tribal Cuisine", "Snacks", "Rice & Curries"],
+        timing: "7:00 AM - 8:30 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.vumaresorts.com/contact-us.html" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Vuma+Resorts+Ltd./@16.5230745,80.6368547,17z/data=!3m1!4b1!4m6!3m5!1s0x3a35fab1403de667:0x5c661fff2e648c96!8m2!3d16.5230745!4d80.6368547!16s%2Fg%2F1tftcrcj?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Hotel Shreya": {
+        description: "Hotel Shreya is a traveler’s rest stop offering hearty meals and South Indian dishes near highway routes.",
+        menu: ["Idly", "Dosa", "Chapathi Curry"],
+        timing: "6:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.google.com.my/travel/hotels/shiva-nagar-hotels/entity/CgsIxM7bxq2oisPQARAB?utm_campaign=sharing&utm_medium=link&utm_source=htls&ts=CAESCgoCCAMKAggDEAAaIAoCGgASGhIUCgcI6Q8QBBgaEgcI6Q8QBBgbGAEyAhAAKgkKBToDVVNEGgA&rp=OAHCAhciFRITCLu0i8nitooDFXgnhwMdLy08ZA&ved=0CAAQ5JsGahcKEwignc-EoOaMAxUAAAAAHQAAAAAQAw" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+Shreya+Warangal+-+Restaurants+%26+Banquet+Halls/@18.0047883,79.5668419,17z/data=!3m1!4b1!4m9!3m8!1s0x3a334f7ef9eeb7ef:0xd0862942d8d6e744!5m2!4m1!1i2!8m2!3d18.0047883!4d79.5668419!16s%2Fg%2F11r9nm_2s?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Hotel Grand Kakatiya": {
+        description: "Hotel Grand Kakatiya offers spacious rooms and a multi-cuisine restaurant ideal for families and groups.",
+        menu: ["Andhra Meals", "Chinese", "Indian"],
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.traveloka.com/en-en/hotel/india/hotel-grand-kakatiya-9000005635565" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Hotel+Grand+Kakatiya/@17.9990572,79.5606546,17z/data=!3m1!4b1!4m9!3m8!1s0x3a334546f284fe83:0x79382c2feed313f6!5m2!4m1!1i2!8m2!3d17.9990572!4d79.5606546!16s%2Fg%2F11yb14h3pb?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Kalinga Dhaba": {
+        description: "A roadside dhaba-style restaurant near highways known for spicy food and casual outdoor seating.",
+        menu: ["North Indian", "Tandoori", "Snacks"],
+        timing: "11:00 AM - 11:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.tripadvisor.in/Restaurant_Review-g735768-d8633539-Reviews-Kalinga_Dhaba-Warangal_Warangal_Urban_District_Telangana.html" },
+        { label: "Google Maps", url: "https://www.google.co.in/maps/search/kalinga+dhaba+near+warangal+fort/@17.9911018,79.4961959,14z?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Kakatiya Resort": {
+        description: "Kakatiya Resort provides beautiful lakeside lodging with a decent restaurant and boating activities.",
+        timing: "7:00 AM - 10:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.com/travel/search?q=kakatiya%20resort%20near%20warangal%20fort&g2lb=4965990%2C4969803%2C72277293%2C72302247%2C72317059%2C72406588%2C72414906%2C72471280%2C72472051%2C72481459%2C72485658%2C72560029%2C72573224%2C72616120%2C72619927%2C72647020%2C72648289%2C72686036%2C72760082%2C72803964%2C72827241%2C72832976%2C72852292%2C72882230%2C72885032%2C72922331%2C72937416&hl=en-IN&gl=in&ssta=1&ts=CAESCAoCCAMKAggDGhwSGhIUCgcI6Q8QBBgaEgcI6Q8QBBgbGAEyAhAAKgcKBToDSU5S&qs=CAEyE0Nnb0lvTjMtNjQzbHBacDZFQUU4CkIJERxqIL8HmFVeQgkRw3IrOjFFn_tCCRFo-uFQH2kwA1pnCAEyY6oBYBABKhMiD2tha2F0aXlhIHJlc29ydCgAMh8QASIbUGzN3tJBHLHz6IdoD7vuoIzPpvwQsFi9ey7KMiYQAiIia2FrYXRpeWEgcmVzb3J0IG5lYXIgd2FyYW5nYWwgZm9ydA&ap=aAG6AQhvdmVydmlldw&ictx=111&ved=0CAAQ5JsGahcKEwjwxafanuaMAxUAAAAAHQAAAAAQDw" }
+        ]
+    },
+    "Tempteys": {
+        description: "Tempteys is a modern dessert cafe specializing in freakshakes, ice creams, and sundaes.",
+        menu: ["Freakshakes", "Brownies", "Waffles", "Ice Cream"],
+        timing: "12:00 PM - 11:00 PM",
+        links: [
+        { label: "Google Maps", url: "https://www.google.com/maps/place/TEMPTEYS/@17.7127157,83.3199048,17z/data=!3m1!4b1!4m6!3m5!1s0x3a39436db7385267:0xfe69ee2272192257!8m2!3d17.7127157!4d83.3199048!16s%2Fg%2F11dfklp4cz?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Nature's Nest Araku": {
+        description: "A peaceful resort nestled in Araku Valley, known for its nature-based experience and traditional food.",
+        menu: ["Tribal Andhra Food", "Snacks", "Chai"],
+        timing: "7:00 AM - 9:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://www.naturesnestaraku.in/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Mountain+View+Resorts/@18.2106876,83.0607881,17z/data=!3m1!4b1!4m9!3m8!1s0x3a3bc8b377f565b5:0xacff2b75dd7e1add!5m2!4m1!1i2!8m2!3d18.2106825!4d83.063363!16s%2Fg%2F1jmck2ym0?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    },
+    "Mountain View Resorts": {
+        description: "Mountain View Resorts offers scenic valley views, cozy rooms, and a simple restaurant serving home-style food.",
+        menu: ["Veg Thali", "Chapathi", "Egg Curry","Rice with different items"],
+        timing: "7:30 AM - 9:00 PM",
+        links: [
+        { label: "Visit Website", url: "https://mountainviewresorts.com/" },
+        { label: "Google Maps", url: "https://www.google.com/maps/place/Mountain+View+Resorts/@18.2106825,83.063363,17z/data=!3m1!4b1!4m9!3m8!1s0x3a3bc8b377f565b5:0xacff2b75dd7e1add!5m2!4m1!1i2!8m2!3d18.2106825!4d83.063363!16s%2Fg%2F1jmck2ym0?entry=ttu&g_ep=EgoyMDI1MDQxNi4xIKXMDSoASAFQAw%3D%3D" }
+        ]
+    }
+                };
+        
+                function getQueryParam(param) {
+                    const params = new URLSearchParams(window.location.search);
+                    return params.get(param);
+                }
+        
+                const name = getQueryParam("name");
+                const nameElement = document.getElementById("restaurant-name");
+                const contentElement = document.getElementById("restaurant-content");
+        
+                if (name && restaurantData[name]) {
+                    nameElement.textContent = name;
+        
+                    const data = restaurantData[name];
+        
+                    // Description
+                    if (data.description) {
+                        const desc = document.createElement("p");
+                        desc.className = "desc";
+                        desc.textContent = data.description;
+                        contentElement.appendChild(desc);
+                    }
+        
+                    // Menu
+                    if (data.menu) {
+                        const menuHeading = document.createElement("h3");
+                        menuHeading.textContent = "Menu:";
+                        contentElement.appendChild(menuHeading);
+        
+                        const menuList = document.createElement("ul");
+                        menuList.className = "menu-list";
+                        data.menu.forEach(item => {
+                            const li = document.createElement("li");
+                            li.textContent = item;
+                            menuList.appendChild(li);
+                        });
+                        contentElement.appendChild(menuList);
+                    }
+        
+                    // Timing
+                    if (data.timing) {
+                        const timing = document.createElement("p");
+                        timing.className = "timing";
+                        timing.innerHTML = `<strong>Open Hours:</strong> ${data.timing}`;
+                        contentElement.appendChild(timing);
+                    }
+        
+                    // Links
+                    if (data.links && data.links.length > 0) {
+                        const linkHeading = document.createElement("h3");
+                        linkHeading.textContent = "Related Links:";
+                        contentElement.appendChild(linkHeading);
+        
+                        const linkList = document.createElement("ul");
+                        linkList.className = "menu-list";
+                        data.links.forEach(link => {
+                            const li = document.createElement("li");
+                            const a = document.createElement("a");
+                            a.href = link.url;
+                            a.textContent = link.label;
+                            a.target = "_blank";
+                            li.appendChild(a);
+                            linkList.appendChild(li);
+                        });
+                        contentElement.appendChild(linkList);
+                    }
+        
+                } else {
+                    nameElement.textContent = "Restaurant Not Found";
+                    contentElement.innerHTML = "<p class='desc'>No details available for this restaurant.</p>";
+                }
+            </script>
+        </body>
+        </html>
+        

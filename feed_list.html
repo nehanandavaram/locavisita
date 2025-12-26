@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        .feedback-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Feedback for <span id="place-title"></span></h2>
+        <div id="feedback-list"></div>
+    </div>
+
+    <script>
+        async function fetchFeedback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeName = urlParams.get("name");
+
+            document.getElementById("place-title").textContent = placeName;
+
+            const response = await fetch(`/get-feedback?place_name=${encodeURIComponent(placeName)}`);
+            const feedbacks = await response.json();
+
+            const feedbackList = document.getElementById("feedback-list");
+            feedbackList.innerHTML = "";
+
+            if (feedbacks.length === 0) {
+                feedbackList.innerHTML = "<p>No feedback available for this place.</p>";
+                return;
+            }
+
+            feedbacks.forEach(feedback => {
+                const feedbackItem = document.createElement("div");
+                feedbackItem.className = "feedback-item";
+                feedbackItem.innerHTML = `<strong>${feedback.user_name}:</strong> ${feedback.comments}`;
+                feedbackList.appendChild(feedbackItem);
+            });
+        }
+
+        fetchFeedback();
+    </script>
+
+</body>
+</html>

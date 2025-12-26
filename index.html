@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisitScope</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .search-container {
+            width: 80%;
+            max-width: 400px;
+            display: flex;
+            margin: 10px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 8px 12px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        .search-container button:hover {
+            background: #0056b3;
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 400px;
+            height: 100vh;
+            background: #f8f9fa;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-content {
+            display: none;
+        }
+
+        .sidebar-content.active {
+            display: block;
+        }
+
+        .location-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: 1cm;
+            background: #00e1ff;
+            color:black;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #map {
+            flex: 1;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Enter location (e.g., Kadapa)">
+        <button onclick="searchLocation()">Search</button>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h2>Click a Location</h2>
+            <div id="sidebar-content" class="sidebar-content">
+                <img id="location-img" class="location-img" src="" alt="Location Image">
+                <hr>
+                <p><b>Name:</b> <span id="location-name"></span></p>
+                <hr>
+                <p><b>Description:</b> <span id="location-desc"></span></p>
+                <hr>
+                <p><b>Famous Places:</b></p>
+                <ul id="famous-places-list">
+                    <a href="places.html"></a>
+                </ul>
+                <hr>
+                <p><b>Distance from Last Selected:</b> <span id="distance-info">0</span> km</p>
+                <div class="buttons">
+                    <button onclick="saveSelection()">Save</button>
+                    <button onclick="shareSelection()">Share</button>
+                <!--    <button onclick="location.href='feed.html'">Feedback</button>-->
+                </div>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script>
+        var map = L.map('map').setView([16.5, 80.5], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var searchMarker = null;
+        var lastSelectedLocation = null;
+        var routeLine = null;  
+
+        var locations = [
+            { name: "Kadapa", lat: 14.4673, lon: 78.8242, img: "images/Kadapa.jpg", desc: "Historic forts and temples.", famous_places: ["Gandikota Forts", "Ameen Peer Dargah"] },
+            { name: "Tirupati", lat: 13.6288, lon: 79.4192, img: "images/Tirupati.jpg", desc: "Home to Tirumala Temple.", famous_places: ["Tirumala Temple", "Talakona Waterfall"] },
+            { name: "Sri Kalahasti", lat: 13.7527, lon: 79.7067, img: "images/Srikalahasti.jpg", desc: "Famous Sri Kalahasti Temple.", famous_places: ["Sri Kalahasti Temple", "Bharadwaja Tirtham"] },
+            { name: "Vijayawada", lat: 16.5062, lon: 80.6480, img: "images/Vijayawada.jpg", desc: "Vijayawada is an important city situated in South India and is considered to be the cultural capital of the state of AndhraPradesh", famous_places: ["Prakasam Barrage", "Kondapalli Forts"] },
+            { name: "Hyderabad", lat: 17.4065, lon: 78.4772, img: "images/Hyderabad.jpg", desc: "Hyderabad is known as the City of Pearls", famous_places: ["Charminar", "Hussain Sagar Lake","Ramoji Film City"] },
+            { name: "Warangal", lat: 17.9693, lon: 79.5926, img: "images/Warangal.jpg", desc: "Warangal is a city in Telangana that's known for its heritage and architecture", famous_places: ["Thousand Pillar Temple","Warangal Fort" ] },
+            { name: "Adilabad", lat: 19.6766, lon: 78.5321, img: "images/Adilabad.jpg", desc: "Adilabad is also referred as 'White Gold City'", famous_places: ["Kuntala waterfalls"] },
+            { name: "Vishakapatanam", lat: 17.6868, lon: 83.2185, img:"images/vishakapatnam.jpg", desc: "It's known for its beaches, cultural heritage, and industrial hub.", famous_places: ["Rama Krishna Beach", "Araku vally"] },
+            {name:"Kurnool",lat: 15.8281,lon: 78.0373,img:"images/kurnool.jpg",desc:"Kurnool is a city in the Indian state of Andhra Pradesh, serving as the district headquarters of Kurnool district"},
+            { name: "Guntur", lat: 16.3067, lon: 80.4365,img:"images/guntur.jpg",desc:"Guntur is a major city in the Andhra Pradesh state, known for its agricultural produce, particularly chili and cotton. The city also has historical significance and is home to several ancient temples, including the famous Amaravati Stupa." },
+            { name: "Nellore", lat: 14.4426, lon: 79.9865,img:"images/nellor.jpg",desc:"Nellore is located along the southeastern coast of Andhra Pradesh and is known for its agricultural productivity, especially rice and aquaculture. The city is also home to several temples and historical sites, making it a cultural hub in the region." },
+            { name: "Kakinada", lat: 16.9891, lon: 82.2475,img:"images/kakinada.jpg",desc:"Kakinada is a port city located on the eastern coast of Andhra Pradesh. Known for its rich cultural heritage and seafood industry, Kakinada is a major industrial hub and also attracts tourists for its scenic beauty and beaches." },
+            { name: "Anantapur", lat: 14.6819, lon: 77.6006,img:"images/ananthapur.jpg",desc:"Anantapur is located in the Rayalaseema region of Andhra Pradesh, known for its dry landscapes and historical significance. The city is famous for the Lepakshi Temple, which is known for its rich architecture and ancient paintings." },
+            { name: "Ongole", lat: 15.5057, lon: 80.0499,img:"images/ongole.jpg",desc:"Ongole is a city located in Andhra Pradesh, known for its cattle breed, the Ongole cattle. It also has historical importance, with various temples and sites from ancient and medieval times." },
+            { name: "Eluru", lat: 16.7107, lon: 81.0952,img:"images/eluru.jpg",desc:" Eluru is a city in the West Godavari district of Andhra Pradesh, known for its agricultural activities and historical significance. It’s also famous for its temples and serene environment, making it a peaceful place to visit." },
+            { name: "Chittoor", lat: 13.2172, lon: 79.1003,img:"images/ananthapur.jpg",desc:"Chittoor is a city in the Rayalaseema region of Andhra Pradesh. It is a prominent location for pilgrims visiting the Tirupati region, and it is also known for its natural beauty, including the Sri Venkateswara National Park." },
+            { name: "Karimnagar", lat: 18.4386, lon: 79.1288,img:"images/karimnagar.jpg",desc:"Karimnagar is an important city in Telangana, known for its historical significance and vibrant cultural heritage. The city is famous for the Elgandal Fort, and its proximity to the Peddapalli district adds to its agricultural importance." },
+            { name: "Khammam", lat: 17.2473, lon: 80.1514,img:"images/khamam.jpg",desc:"Khammam is an ancient city in Telangana, famous for its temples, forts, and the scenic Kinnerasani Wildlife Sanctuary. The city has a rich cultural heritage and is known for its agriculture and natural resources." },
+            { name: "Nalgonda", lat: 17.0541, lon: 79.2671,img:"images/nalgonda.jpg",desc:"Nalgonda is a city with historical significance in Telangana, featuring ancient temples and ruins. It is known for its agricultural landscapes and is a prominent area for cotton and groundnut cultivation." },
+            { name: "Siddipet", lat: 18.1010, lon: 78.8529,img:"images/siddipet.jpg",desc:"Siddipet is a small city in Telangana, known for its rich cultural and agricultural background. It is a major center for the production of agricultural goods and serves as a regional hub for several industries." },
+            
+        ];
+
+        locations.forEach(loc => {
+    var marker = L.marker([loc.lat, loc.lon]).addTo(map)
+        .bindPopup(`<b>${loc.name}</b><br>Loading weather...`)
+        .on('click', function () {
+            updateSidebar(loc);
+            this.openPopup(); // Open popup on click
+        });
+
+    fetchWeather(loc.lat, loc.lon, marker); // <-- Call this immediately to fetch weather for all locations
+});
+
+function fetchWeather(lat, lon, marker) {
+    var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&timezone=auto`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.hourly && data.hourly.temperature_2m && data.hourly.temperature_2m.length > 0) {
+                let temp = data.hourly.temperature_2m[0];
+                marker.setPopupContent(`<b>${marker.getPopup().getContent().split('<br>')[0]}</b><br>Temperature: ${temp}°C`);
+            } else {
+                marker.setPopupContent(`<b>${marker.getPopup().getContent().split('<br>')[0]}</b><br>Weather data not available.`);
+            }
+        })
+        .catch(error => {
+            console.error("Weather API Error:", error);
+            marker.setPopupContent(`<b>${marker.getPopup().getContent().split('<br>')[0]}</b><br>Weather fetch failed.`);
+        });
+}
+
+
+    
+
+
+function updateSidebar(location) {
+    document.getElementById('location-name').textContent = location.name || "N/A";
+    document.getElementById('location-desc').textContent = location.desc || "No description available.";
+    document.getElementById('location-img').src = location.img || "images/default.jpg";
+
+    var famousPlacesList = document.getElementById('famous-places-list');
+    famousPlacesList.innerHTML = "";
+
+    if (location.famous_places && Array.isArray(location.famous_places)) {
+        location.famous_places.forEach(place => {
+            var li = document.createElement('li');
+            var link = document.createElement('a');
+            link.textContent = place;
+            link.href = `place.html?name=${encodeURIComponent(place)}`;
+            link.style.color = "blue";
+            li.appendChild(link);
+            famousPlacesList.appendChild(li);
+        });
+    } else {
+        famousPlacesList.innerHTML = "<li>No famous places listed.</li>";
+    }
+
+    document.getElementById('sidebar-content').classList.add('active');
+
+    if (lastSelectedLocation) {
+        var distance = calculateDistance(lastSelectedLocation.lat, lastSelectedLocation.lon, location.lat, location.lon);
+        document.getElementById('distance-info').textContent = distance.toFixed(2);
+    } else {
+        document.getElementById('distance-info').textContent = "0";
+    }
+
+    lastSelectedLocation = location;
+}
+
+
+
+        function searchLocation() {
+            var query = document.getElementById("search-input").value;
+            if (!query) {
+                alert("Enter a location.");
+                return ;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var lat = data[0].lat;
+                        var lon = data[0].lon;
+                        var placeName = data[0].display_name;
+
+                        map.setView([lat, lon], 12);
+
+                        if (searchMarker) {
+                            map.removeLayer(searchMarker);
+                        }
+
+                        searchMarker = L.marker([lat, lon]).addTo(map)
+                            .bindPopup(`<strong>${placeName}</strong>`)
+                            .openPopup();
+                    } else {
+                        alert("Location not found.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching location:", error);
+                    alert("Error searching location.");
+                });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var R = 6371;
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+       
+
+
+
+
+function fetchWeather(lat, lon, marker) {
+    var url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&timezone=auto`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.hourly && data.hourly.temperature_2m && data.hourly.temperature_2m.length > 0) {
+                let temp = data.hourly.temperature_2m[0];
+                marker.setPopupContent(`<b>Temperature:</b> ${temp}°C`);
+            } else {
+                marker.setPopupContent("Weather data not available.");
+            }
+        })
+        .catch(error => {
+            console.error("Weather API Error:", error);
+            marker.setPopupContent("Weather fetch failed.");
+        });
+}
+
+
+function updateSidebar(location) {
+    document.getElementById('location-name').textContent = location.name;
+    document.getElementById('location-desc').textContent = location.desc;
+    document.getElementById('location-img').src = location.img;
+
+    var famousPlacesList = document.getElementById('famous-places-list');
+    famousPlacesList.innerHTML = "";
+    location.famous_places.forEach(place => {
+        var li = document.createElement('li');
+        var link = document.createElement('a');
+        link.textContent = place;
+        link.href = `place.html?name=${encodeURIComponent(place)}`; // Redirect to a new page
+        link.style.color = "blue";
+        link.style.cursor = "pointer";
+        li.appendChild(link);
+        famousPlacesList.appendChild(li);
+    });
+
+    document.getElementById('sidebar-content').classList.add('active');
+
+    if (lastSelectedLocation) {
+        var distance = calculateDistance(lastSelectedLocation.lat, lastSelectedLocation.lon, location.lat, location.lon);
+        document.getElementById('distance-info').textContent = distance.toFixed(2);
+    } else {
+        document.getElementById('distance-info').textContent = "0";
+    }
+
+    lastSelectedLocation = location;
+}
+
+
+
+
+
+        function saveSelection() { alert("Location saved!"); }
+        function shareSelection() { alert("Share link generated!"); }
+    </script>
+
+</body>
+</html>
